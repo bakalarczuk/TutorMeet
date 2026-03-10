@@ -1,0 +1,133 @@
+<div id="meet"></div>
+<script src="https://meet.jit.si/external_api.js"></script>
+<script>
+    var domain = "meet.jit.si";
+    var options = {
+        roomName: "{roomname}",
+        width: '100%',
+        height: 700,
+        parentNode: document.querySelector("#meet"),
+        configOverwrite: {},
+        interfaceConfigOverwrite: {
+            TOOLBAR_BUTTONS: [
+                'microphone', 'camera', 'closedcaptions', 'fullscreen',
+                'chat', 'settings', 'raisehand',
+                'videoquality', 'tileview'
+            ],
+
+            SETTINGS_SECTIONS: ['devices', 'language', 'moderator', 'profile', 'calendar'],
+            filmStripOnly: false,
+        }
+    }
+    var api = new JitsiMeetExternalAPI(domain, options);
+    api.executeCommand('displayName', '{displayname}');
+
+
+    // var recorder; // globally accessible
+
+    // captureScreen(function (screen) {
+    //     video.srcObject = screen;
+
+    //     recorder = RecordRTC(screen, {
+    //         type: 'video'
+    //     });
+
+    //     recorder.startRecording();
+
+    //     // release screen on stopRecording
+    //     recorder.screen = screen;
+
+    // });
+    var video = document.querySelector('#meet');
+
+    if (!navigator.getDisplayMedia && !navigator.mediaDevices.getDisplayMedia) {
+        var error = 'Your browser does NOT support the getDisplayMedia API.';
+        throw new Error(error);
+    }
+
+    function invokeGetDisplayMedia(success, error) {
+        var displaymediastreamconstraints = {
+            video: {
+                displaySurface: 'browser', // monitor, window, application, browser
+                logicalSurface: true,
+                cursor: 'always' // never, always, motion
+            }
+        };
+
+        // above constraints are NOT supported YET
+        // that's why overridnig them
+        displaymediastreamconstraints = {
+            video: true
+        };
+
+        if (navigator.mediaDevices.getDisplayMedia) {
+            navigator.mediaDevices.getDisplayMedia(displaymediastreamconstraints).then(success).catch(error);
+        } else {
+            navigator.getDisplayMedia(displaymediastreamconstraints).then(success).catch(error);
+        }
+    }
+
+    function captureScreen(callback) {
+        invokeGetDisplayMedia(function (screen) {
+            addStreamStopListener(screen, function () {
+                document.getElementById('btn-stop-recording').click();
+            });
+            callback(screen);
+        }, function (error) {
+            console.error(error);
+            alert('Unable to capture your screen. Please check console logs.\n' + error);
+        });
+    }
+
+    function stopRecordingCallback() {
+        video.src = video.srcObject = null;
+        video.src = URL.createObjectURL(recorder.getBlob());
+
+        recorder.screen.stop();
+        recorder.destroy();
+        recorder = null;
+    }
+
+    function addStreamStopListener(stream, callback) {
+        stream.addEventListener('ended', function () {
+            callback();
+            callback = function () {};
+        }, false);
+        stream.addEventListener('inactive', function () {
+            callback();
+            callback = function () {};
+        }, false);
+        stream.getTracks().forEach(function (track) {
+            track.addEventListener('ended', function () {
+                callback();
+                callback = function () {};
+            }, false);
+            track.addEventListener('inactive', function () {
+                callback();
+                callback = function () {};
+            }, false);
+        });
+    }
+
+    document.getElementById("btn-stop-session").onclick = function () {
+        $.confirm({
+            title: 'Ending session!',
+            content: 'You\'re pressed end session button!<br>Are you sure you want to end session?',
+            buttons: {
+                confirm: {
+                    text: 'Yes',
+                    btnClass: 'btn-green',
+                    action: function () {
+                        api.executeCommand('hangup');
+                        //recorder.stopRecording(stopRecordingCallback);
+                        window.location.href = "/admin/sessionend";
+                    }
+                },
+                cancel: {
+                    text: 'No',
+                    btnClass: 'btn-red',
+                }
+            }
+        });
+    };
+</script>

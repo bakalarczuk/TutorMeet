@@ -1,0 +1,50 @@
+<div class="card-body">
+    <form method="post" id="{formid}" class="invoice-form">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <div class="text">
+                        <h5 class="name">{name}</h5>
+                        <h6 class="text-danger">{notapprovedhours}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1">
+                <div class="form-group">
+                    <span>{indicator}</span>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="form-group">
+                    <label>Rate</label>
+                    <span>{currency}</span><input class="au-input au-input--full" type="text" name="rate"
+                                                  value="{rate}">
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="form-group">
+                    <label>Items</label>
+                    <input class="au-input au-input--full" type="text" name="hours" value="{hours}">
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="form-group">
+                    <label>Costs</label>
+                    <input class="au-input au-input--full" type="text" name="costs" value="{costs}">
+                    <input type="hidden" name="date" value="{date}">
+                    <input type="hidden" name="userid" value="{userid}">
+                    <input type="hidden" name="invoiceno" value="{invoiceno}">                    
+                    <input type="hidden" name="daily" value="{daily}">
+                    <input type="hidden" name="italy" value="{italy}">
+
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="form-group">
+                    <label></label>
+                    {button}
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

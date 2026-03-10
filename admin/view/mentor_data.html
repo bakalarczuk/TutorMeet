@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title></title>
+</head>
+
+<body>
+  <h1 align="right">INVOICE</h1>
+  <table width="100%" cellspacing="2" cellpadding="2" border="0">
+    <tbody>
+      <tr>
+        <td width="50%" valign="top">{realname}<br>
+          {address}<br>
+          {town}<br>
+        </td>
+        <td width="50%" valign="top">
+          <table width="100%" cellspacing="2" cellpadding="5" border="0">
+            <tbody>
+              <tr>
+                <td width="50%" valign="top" align="right"><b>DATE:</b><br>
+                </td>
+                <td width="50%" valign="top">{date}<br>
+                </td>
+              </tr>
+              <tr>
+                <td width="50%" valign="top" align="right"><b>INVOICE
+                    #:</b><br>
+                </td>
+                <td width="50%" valign="top">{invoiceno}/{invoicetype}/{period}<br>
+                </td>
+              </tr>
+              <tr>
+                <td width="50%" valign="top" align="right"><b>INVOICE
+                    PERIOD:</b><br>
+                </td>
+                <td width="50%" valign="top">{period}<br>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+        </td>
+      </tr>
+      <tr>
+        <td width="50%" valign="top">
+          <ELAB>Invoice to:<br>
+            <b>TutorMeet</b><br>
+            ul. Nowogrodzka 68<br>
+            02-014 Warszawa <br>
+            NIP/VAT: PL7010719386<br>
+            Poland<br>
+        </td>
+        <td width="50%" valign="top"><br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p><br>
+  </p>
+  <table width="100%" cellspacing="0" cellpadding="5" border="0">
+    <tbody>
+      <tr>
+        <th width="40%" valign="middle" bgcolor="#c0c0c0" align="center" height="40">DESCRIPTION<br>
+        </th>
+        <th width="20%" valign="middle" bgcolor="#c0c0c0" align="center" height="40">PER HOUR<br>
+        </th>
+        <th width="20%" valign="middle" bgcolor="#c0c0c0" align="center" height="40">HOURS<br>
+        </th>
+        <th width="20%" valign="middle" bgcolor="#c0c0c0" align="center" height="40">AMOUNT<br>
+        </th>
+      </tr>
+      <tr>
+        <td width="40%" valign="middle" height="40">Tutoring<br>
+        </td>
+        <td width="20%" valign="middle" align="right" height="40">{currency}
+
+          {rate}<br>
+        </td>
+        <td width="20%" valign="middle" align="right" height="40">{hours}<br>
+        </td>
+        <td width="20%" valign="middle" align="right" height="40">{currency}
+
+          {total}<br>
+        </td>
+      </tr>
+      <tr>
+        <td width="40%" valign="top" height="20"><br>
+        </td>
+        <td width="20%" valign="top" height="20"><br>
+        </td>
+        <td width="20%" valign="top" height="20"><br>
+        </td>
+        <td width="20%" valign="top" height="20"><br>
+        </td>
+      </tr>
+      <tr>
+        <td valign="middle" height="40"><br>
+        </td>
+        <td valign="middle" height="40"><br>
+        </td>
+        <th valign="middle" align="right" height="40">TOTAL:<br>
+        </th>
+        <td valign="middle" align="right" height="40">{currency}
+          {total}</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><b><br>
+      Please make all payments to:</b><br>
+    {bankname}<br>
+    {iban}{swift}{account}<br>
+  </p>
+</body>
+
+</html>

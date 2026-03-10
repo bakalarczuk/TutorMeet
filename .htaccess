@@ -1,0 +1,37 @@
+RewriteEngine On    # Turn on the rewriting engine
+
+RewriteCond %{HTTPS} off
+RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI}
+
+RewriteRule ^admin/adduser admin/index.php?func=adduser [NC,L]
+RewriteRule ^admin/allusers admin/index.php?func=allusers [NC,L]
+RewriteRule ^admin/message admin/index.php?func=message [NC,L]
+RewriteRule ^admin/inbox admin/index.php?func=inbox [NC,L]
+RewriteRule ^admin/invoices_list admin/index.php?func=invoices_list [NC,L]
+RewriteRule ^admin/invoices_history/([^/]*)/([^/]*) admin/index.php?func=invoices_history&mentor=$1&period=$2 [NC,L]
+RewriteRule ^admin/invoices_history/([^/]*) admin/index.php?func=invoices_history&mentor=$1 [NC,L]
+RewriteRule ^admin/invoices_history admin/index.php?func=invoices_history [NC,L]
+
+RewriteRule ^admin/mentors admin/index.php?func=mentors [NC,L]
+RewriteRule ^admin/applicants admin/index.php?func=aplicants [NC,L]
+RewriteRule ^admin/conference admin/index.php?func=conference [NC,L]
+RewriteRule ^admin/session/([^/]*)/([^/]*)/([^/]*)/([^/]*) admin/index.php?func=session&roomname=$1&displayname=$2&starttime=$3&calid=$4 [NC,L]
+RewriteRule ^admin/settings admin/index.php?func=settings [NC,L]
+RewriteRule ^admin/sessionend admin/index.php?func=sessionend [NC,L]
+RewriteRule ^admin/addmeeting admin/index.php?func=addmeeting [NC,L]
+RewriteRule ^admin/sessionedit/([^/]*) admin/index.php?func=sessionedit&id=$1 [NC,L]
+RewriteRule ^admin/approve/([^/]*) admin/index.php?func=approve&id=$1 [NC,L]
+RewriteRule ^admin/calendar admin/index.php?func=calendar [NC,L]
+RewriteRule ^admin/date/([^/]*)/([^/]*) admin/index.php?func=calendar&month=$1&year=$2 [NC,L]
+RewriteRule ^admin/meetings admin/index.php?func=meetings [NC,L]
+RewriteRule ^admin/applicant_meetings admin/index.php?func=applicant_meetings [NC,L]
+RewriteRule ^admin/mentor_sessions/([^/]*) admin/index.php?func=mentor_sessions&id=$1 [NC,L]
+RewriteRule ^admin/applicant_sessions/([^/]*) admin/index.php?func=applicant_sessions&id=$1 [NC,L]
+RewriteRule ^admin/settlements admin/index.php?func=settlements [NC,L]
+RewriteRule ^admin/assign_applicant admin/index.php?func=assign [NC,L]
+RewriteRule ^admin/assignee admin/index.php?func=assignee [NC,L]
+RewriteRule ^admin/cancel/([^/]*)/([^/]*)([^/]*) admin/index.php?func=cancel&sesid=$1&userid=$2 [NC,L]
+RewriteRule ^admin/canceled admin/index.php?func=canceled [NC,L]
+RewriteRule ^admin/accept/([^/]*) admin/index.php?func=accept&id=$1 [NC,L]
+RewriteRule ^admin/offline/([^/]*) admin/index.php?func=offline&id=$1 [NC,L]
+RewriteRule ^admin/transfer/([^/]*)/([^/]*) admin/index.php?func=transfer&calid=$1&userid=$2 [NC,L]

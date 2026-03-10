@@ -1,0 +1,79 @@
+<div id="error">
+</div>
+<div class="card">
+    <div class="card-body">
+        <form method="post" id="add-meeting-form">
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input class="au-input au-input--full" type="text" name="date" id="date" />
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="form-group">
+                        <label>Time</label>
+                        <input class="au-input au-input--full" type="text" name="time" id="time" />
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="form-group">
+                        <label>Hours</label>
+                        <select class="au-select au-input--full " id="hours" name="hours">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label>Workshop</label>
+                        <input type="checkbox" name="daily" value="1" {disabled}>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+            <div class="col-lg-12">
+                {mentors}
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Get Applicants</label>
+                            {aplicant}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input class="au-input au-input--full" type="text" name="title" id="title" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="au-input au-input--full" rows="3" name="description"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <button class="au-btn au-btn--block au-btn--green m-b-20" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/masking-input.js" data-autoinit="true"></script>

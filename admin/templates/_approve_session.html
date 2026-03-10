@@ -1,0 +1,68 @@
+<div id="error">
+</div>
+<div class="card">
+    <div class="card-body">
+        <form method="post" id="approve-edit-form">
+            <input type="hidden" name="recipient" value="{recipient}" />
+            <input type="hidden" name="sessionid" value="{sessionid}" />
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label>Duration (hours)</label>
+                        <input class="au-input au-input--full" type="text" name="duration" value="{duration}" />
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label>Duration (seconds)</label>
+                        <input class="au-input au-input--full" type="text" value="{durationsec}" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <label>Summary</label>
+                        <textarea class="au-input au-input--full" type="text" name="summary"
+                            readonly>{summary}</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <a class="au-btn au-btn--block au-btn--blue m-b-20" style="color: #fff;"
+                            onclick="window.location.href='/admin/meetings';">Cancel</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <button class="au-btn au-btn--block au-btn--green m-b-20" type="submit">Approve</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form method="post" id="approve-msg-form">
+            <input type="hidden" name="recipient" value="{recipient}" />
+            <input type="hidden" name="sender" value="{sender}" />
+            <input type="hidden" name="subject" value="Approval problem" />
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea class="au-input au-input--full" type="text" name="message"
+                            id="approve-msg"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <button class="au-btn au-btn--block au-btn--blue2 m-b-20" id="send-msg-btn" type="submit">Send
+                            message</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

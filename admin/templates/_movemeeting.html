@@ -1,0 +1,42 @@
+<div id="error">
+</div>
+<div class="card">
+    <div class="card-body">
+        <form method="post" id="move-meeting-form">
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input class="au-input au-input--full" type="text" name="date" id="date" value="{date}" />
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="form-group">
+                        <label>Time</label>
+                        <input class="au-input au-input--full" type="text" name="time" id="time" value="{time}" />
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="calid" value="{calid}" />
+            <input type="hidden" name="hours" value="{hours}" />
+            <input type="hidden" name="daily" value="{daily}" />
+            <input type="hidden" name="aplicants" value="{aplicants}" />
+            <input type="hidden" name="title" value="{title}" />
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <textarea class="au-input au-input--full" rows="8" name="reason"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <button class="au-btn au-btn--block au-btn--green m-b-20" type="submit">Save</button>
+                    </div>
+                </div>
+            </div>
+    </form>
+    </div>
+</div>

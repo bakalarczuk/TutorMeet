@@ -1,0 +1,51 @@
+<div class="card-body">
+    <form method="post" id="{formid}" class="past-invoice-form">
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="form-group">
+                    <div class="text">
+                        <h5 class="name">{name}</h5>
+                        <h6>{date}</h6>
+                        <p style="font-size: 12px;"><a href="{url}" target="_blank">Link to invoice</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1">
+                <div class="form-group">
+                    <span>{indicator}</span>
+                </div>
+            </div>
+            <div class="col-lg-1">
+                <div class="form-group">
+                    <label>Rate</label>
+                    <input class="au-input au-input--full" type="text" name="rate"
+                                                  value="{rate}" {readonly}>
+                </div>
+            </div>
+            <div class="col-lg-1">
+                <div class="form-group">
+                    <label>Items</label>
+                    <input class="au-input au-input--full" type="text" name="hours" value="{hours}" {readonly}>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="form-group">
+                    <label>Reimbursement</label>
+                    <input class="au-input au-input--full" type="text" name="costs" value="{costs}" {readonly}>
+                    <input type="hidden" name="invoiceid" value="{invoiceid}">
+                    <input type="hidden" name="invoiceno" value="{invoiceno}">
+                    <input type="hidden" name="userid" value="{userid}">                    
+                    <input type="hidden" name="daily" value="{daily}">
+                    <input type="hidden" name="italy" value="{italy}">
+
+                </div>
+            </div>
+            {totaldiv}
+            <div class="col-lg-2">
+                <div class="form-group">
+                    {button}
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
