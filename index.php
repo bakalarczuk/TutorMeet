@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         if (password_verify($password, $hashed_password)) {
                             // Password is correct, check if user is not blocked
                             if ($blocked == 0) {
-                                session_start();
+                                session_regenerate_id(true);
 
                                 // Store data in session variables
                                 $_SESSION["loggedin"] = true;
@@ -104,8 +104,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 function gravatar($email) {
     $email = md5(strtolower(trim($email)));
-    $gravurl = "http://www.gravatar.com/avatar/$email?&s=360";
-    return '<img src="' . $gravurl . '" alt="' . $_SESSION["realname"] . '">';
+    $gravurl = "https://www.gravatar.com/avatar/$email?&s=360";
+    return '<img src="' . $gravurl . '" alt="' . htmlspecialchars($_SESSION["realname"], ENT_QUOTES, 'UTF-8') . '">';
 }
 ?>
 <!DOCTYPE html>
@@ -154,7 +154,7 @@ function gravatar($email) {
                                     <span class="input-group-text"><i class="fas fa-user"></i></span>
                                 </div>
                                 <input type="text" name="username" class="form-control" placeholder="username"
-                                       value="<?php echo $username; ?>">
+                                       value="<?php echo htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>">
 
                             </div>
                             <div class="input-group form-group">

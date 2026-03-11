@@ -21,37 +21,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $username = trim($_POST["username"]);
     }
 
-    // Check if password is empty
-    if (empty(trim($_POST["password"]))) {
-        $password_err = "Please enter your password.";
-    } else {
-        $password = trim($_POST["password"]);
-    }
-
-    // Check if rpassword is empty
-    if (empty(trim($_POST["rpassword"]))) {
-        $rpassword_err = "Please repeat your password.";
-    } else {
-        $rpassword = trim($_POST["rpassword"]);
-    }
-
     // Validate credentials
-    if (empty($username_err)){// && empty($password_err) && empty($rpassword_err)) {
+    if (empty($username_err)){
         $output = "";
         $email = $func->GetEmail($username);
         if ($email == "Wrong user") {
             $output = "No user with this user name. Please try again.";
         } else {
-            $func->SendEmail($email, "TutorMeet password change", "TutorMeet system password reset. Your temporary password is: " . $newpass . ". If you confirm password change, please click on link <a href='https://" . $_SERVER['SERVER_NAME'] . "/confirm.php?q=" . $email . "&t=" . $password . "'>here</a>");
-            $output = "Password has been changed<br>Wait for redirection in <span id='seconds'>3</span> seconds";
+            // Generate cryptographically secure token
+            $reset_token = bin2hex(random_bytes(32));
+            // Store only the HASH of the token in the database
+            $token_hash = hash('sha256', $reset_token);
+            $expires_at = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+            // Invalidate any previous unused tokens for this user
+            $sql_invalidate = "UPDATE password_resets SET used = 1 WHERE userLogin = ? AND used = 0";
+            if ($stmt_inv = mysqli_prepare($link, $sql_invalidate)) {
+                mysqli_stmt_bind_param($stmt_inv, "s", $username);
+                mysqli_stmt_execute($stmt_inv);
+                mysqli_stmt_close($stmt_inv);
+            }
+
+            // Save the token hash to the database
+            $sql_token = "INSERT INTO password_resets (userLogin, token_hash, expires_at) VALUES (?, ?, ?)";
+            if ($stmt_token = mysqli_prepare($link, $sql_token)) {
+                mysqli_stmt_bind_param($stmt_token, "sss", $username, $token_hash, $expires_at);
+                mysqli_stmt_execute($stmt_token);
+                mysqli_stmt_close($stmt_token);
+            }
+
+            // Send the plain token in the email link (NOT the hash)
+            $reset_link = 'https://' . htmlspecialchars($_SERVER['SERVER_NAME'], ENT_QUOTES, 'UTF-8')
+                        . '/confirm.php?q=' . urlencode($username) . '&t=' . $reset_token;
+            $func->SendEmail($email, "TutorMeet password change",
+                "TutorMeet system password reset.<br><br>"
+                . "Click <a href='" . $reset_link . "'>here</a> to set a new password.<br><br>"
+                . "This link expires in 1 hour. If you did not request this, ignore this email.");
+            $output = "Reset link sent to your email.<br>Check your inbox.";
         }
     }
 }
 
 function gravatar($email) {
     $email = md5(strtolower(trim($email)));
-    $gravurl = "http://www.gravatar.com/avatar/$email?&s=360";
-    return '<img src="' . $gravurl . '" alt="' . $_SESSION["realname"] . '">';
+    $gravurl = "https://www.gravatar.com/avatar/$email?&s=360";
+    return '<img src="' . $gravurl . '" alt="' . htmlspecialchars($_SESSION["realname"] ?? '', ENT_QUOTES, 'UTF-8') . '">';
 }
 ?>
 <!DOCTYPE html>
@@ -127,44 +141,17 @@ function gravatar($email) {
                                     <span class="input-group-text"><i class="fas fa-user"></i></span>
                                 </div>
                                 <input type="text" name="username" class="form-control" placeholder="username"
-                                       value="<?php echo $username; ?>">
+                                       value="<?php echo htmlspecialchars($username ?? '', ENT_QUOTES, 'UTF-8'); ?>">
 
                             </div>
-                            <div class="input-group form-group">
-                                <div class="input-group-prepend <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
-                                    <span class="input-group-text" onclick="reveal('pass-control');"><i
-                                            class="fas fa-key"></i></span>
-                                </div>
-                                <input type="password" name="password" class="form-control" id="pass-control" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-                                       placeholder="password">
-                            </div>
-                            <div class="input-group form-group">
-                                <div class="input-group-prepend <?php echo (!empty($rpassword_err)) ? 'has-error' : ''; ?>">
-                                    <span class="input-group-text" onclick="reveal('rpass-control');"><i
-                                            class="fas fa-key"></i></span>
-                                </div>
-                                <input type="password" name="rpassword" class="form-control" id="rpass-control" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-                                       placeholder="repeat password">
-                            </div>
-                            <!--<div class="row align-items-center remember">
-                                    <input type="checkbox">Remember Me
-                                </div>-->
                             <div class="form-group">
-                                <input type="submit" value="Reset" class="btn float-right login_btn">
+                                <input type="submit" value="Send Reset Link" class="btn float-right login_btn">
                             </div>
                         </form>
                     </div>
                     <div class="card-footer">
-                        <div style="font-size: 11px; color: #fff;">Password should be at least 8 characters long<br>
-                            Password should contain at least 1 capital letter<br>
-                            Password should contain at least 1 lowercase letter<br>
-                            Password should contain at least 1 special character<br>
-                            Password should contain at least 1 numeric character
-                        </div>
                         <div class="d-flex justify-content-center">
 <?php echo (!empty($username_err)) ? $username_err . "<br>" : ''; ?>
-                            <?php echo (!empty($password_err)) ? $password_err . "<br>" : ''; ?>
-                            <?php echo (!empty($rpassword_err)) ? $rpassword_err . "<br>" : ''; ?>
                             <?php echo (!empty($output)) ? "<span style='color:#00ff00;'>" . $output . "</span>" : ''; ?>
                         </div>
                     </div>

@@ -6,7 +6,7 @@ $functions = new Functions;
 
 $link = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
-if(isset($_GET['mentor'])) $condition = " AND recordId=".mysql_real_escape_string ($_GET['mentor']);
+if(isset($_GET['mentor'])) $condition = " AND recordId=" . intval($_GET['mentor']);
 else $condition="";
 
 $sql = "SELECT * FROM users WHERE userPrivilege = 5".$condition;

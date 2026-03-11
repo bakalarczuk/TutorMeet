@@ -8,10 +8,10 @@ if ($_POST) {
     $db = new Database();
     $link = $db->connect();
 
-    $aplicant = mysqli_real_escape_string($link, $_POST['aplicant']);
-    $mentor = mysqli_real_escape_string($link, $_POST['mentorid']);
-    $hours = mysqli_real_escape_string($link, $_POST['hours']);
-    $country = mysqli_real_escape_string($link, $_POST['country']);
+    $aplicant = intval($_POST['aplicant']);
+    $mentor = intval($_POST['mentorid']);
+    $hours = intval($_POST['hours']);
+    $country = intval($_POST['country']);
 
     $h = 0;
 
@@ -25,20 +25,23 @@ if ($_POST) {
             if (mysqli_stmt_execute($stmt)) {
                 echo "saved";
             } else {
-                echo "Error: " . $sql . "<br>" . mysqli_error($link);
+                error_log("SQL Error: " . mysqli_error($link));
+                echo "Error processing request.";
             }
         }
         mysqli_stmt_close($stmt);
         mysqli_close($link);
     } else {
 
-        $sql = "UPDATE assignments SET assigned=assigned+" . $hours . ", hoursleft=hoursleft + " . $hours . "";
+        $sql = "UPDATE assignments SET assigned=assigned+?, hoursleft=hoursleft+? WHERE mentorid=? AND aplicantid=?";
         if ($stmt = mysqli_prepare($link, $sql)) {
+            mysqli_stmt_bind_param($stmt, "iiii", $hours, $hours, $mentor, $aplicant);
 
             if (mysqli_stmt_execute($stmt)) {
                 echo "saved";
             } else {
-                echo "Error: " . $sql . "<br>" . mysqli_error($link);
+                error_log("SQL Error: " . mysqli_error($link));
+                echo "Error processing request.";
             }
         }
         mysqli_stmt_close($stmt);

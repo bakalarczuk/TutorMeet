@@ -85,14 +85,14 @@ if ($_POST) {
                                 $msg = "Registration to TutorMeet system. Your login is ".$email.", and temporary password is: " . $_POST['password'] . ".<br>Change it at first login on https://" . $_SERVER['SERVER_NAME'];
                                 $functions->SendEmail($email, "TutorMeet Registration", $msg);
                             } else {
-                                echo "Error: " . $sql2 . "<br>" . mysqli_error($link);
+                                error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
                             }
                         } else {
-                            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+                            error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
                         }
                         mysqli_stmt_close($stmt3);
                     } else {
-                        echo "Error: " . $sql . "<br>" . mysqli_error($link);
+                        error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
                     }
                     mysqli_stmt_close($stmt2);
                 } elseif ($userPrivilege == 6) {
@@ -132,11 +132,11 @@ if ($_POST) {
                             $msg = "Registration to TutorMeet system. Your login is ".$email.", and temporary password is: " . $_POST['password'] . ". Change it at first login on https://" . $_SERVER['SERVER_NAME'];
                             $functions->SendEmail($email, "TutorMeet Registration", $msg);
                         } else {
-                            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+                            error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
                         }
                         mysqli_stmt_close($stmt3);
                     } else {
-                        echo "Error: " . $sql . "<br>" . mysqli_error($link);
+                        error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
                     }
                     mysqli_stmt_close($stmt2);
                 } elseif ($userPrivilege == 9) {
@@ -170,11 +170,11 @@ if ($_POST) {
                             $msg = "Registration to TutorMeet system. Your login is ".$email.", and temporary password is: " . $_POST['password'] . ". Change it at first login on https://" . $_SERVER['SERVER_NAME'];
                             $functions->SendEmail($email, "TutorMeet Registration", $msg);
                         } else {
-                            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+                            error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
                         }
                         mysqli_stmt_close($stmt3);
                     } else {
-                        echo "Error: " . $sql . "<br>" . mysqli_error($link);
+                        error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
                     }
                     mysqli_stmt_close($stmt2);
                 } else {
@@ -190,7 +190,7 @@ if ($_POST) {
                         $msg = "Registration to TutorMeet system. Your login is ".$email.", and temporary password is: " . $_POST['password'] . ". Change it at first login on https://" . $_SERVER['SERVER_NAME'];
                         $functions->SendEmail($email, "TutorMeet Registration", $msg);
                     } else {
-                        echo "Error: " . $sql . "<br>" . mysqli_error($link);
+                        error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
                     }
                     mysqli_stmt_close($stmt4);
                 }

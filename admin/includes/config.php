@@ -1,11 +1,10 @@
 <?php
 
-/* Database credentials. Assuming you are running MySQL
-  server with default setting (user 'root' with no password) */
-define('DB_SERVER', 'localhost'); // sql.tutormeet.nazwa.pl
-define('DB_USERNAME', 'root'); // tutormeet_db
-define('DB_PASSWORD', 'root'); //
-define('DB_NAME', 'myelab'); // tutormeet_db
+/* Database credentials - use environment variables in production */
+define('DB_SERVER', getenv('DB_SERVER') ?: 'localhost');
+define('DB_USERNAME', getenv('DB_USERNAME') ?: 'root');
+define('DB_PASSWORD', getenv('DB_PASSWORD') ?: 'root');
+define('DB_NAME', getenv('DB_NAME') ?: 'myelab');
 
 
 class Database
@@ -18,7 +17,8 @@ class Database
 
     // Check connection
     if ($link === false) {
-      die("ERROR: Could not connect. " . mysqli_connect_error());
+      error_log("DB connection failed: " . mysqli_connect_error());
+      die("ERROR: Could not connect to database.");
     }
     return $link;
   }

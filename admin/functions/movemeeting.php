@@ -17,7 +17,7 @@ if ($_POST) {
     if (mysqli_stmt_execute($stmt)) {
             echo "saved";
     } else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($link);
+        error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
     }
     mysqli_stmt_close($stmt);
 

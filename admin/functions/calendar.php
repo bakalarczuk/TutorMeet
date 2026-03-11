@@ -38,7 +38,7 @@ class Calendar
 
         if (null == $year && isset($_GET['year'])) {
 
-            $year = mysql_real_escape_string($_GET['year']);
+            $year = intval($_GET['year']);
         } else if (null == $year) {
 
             $year = date("Y", time());
@@ -46,7 +46,7 @@ class Calendar
 
         if (null == $month && isset($_GET['month'])) {
 
-            $month = mysql_real_escape_string($_GET['month']);
+            $month = intval($_GET['month']);
         } else if (null == $month) {
 
             $month = date("m", time());

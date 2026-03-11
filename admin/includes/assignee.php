@@ -29,7 +29,7 @@ if ($stmt = mysqli_prepare($link, $sql)) {
             echo $template;
         }
     } else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($link);
+        error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
     }
 }
 echo '</div></div>';

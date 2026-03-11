@@ -7,20 +7,24 @@ if ($_POST) {
     $db = new Database();
     $link = $db->connect();
 
-    $checksql = "SELECT * FROM invoices WHERE userid = " . $_POST['userid'] . " AND Month(date) in (" . date('m', strtotime('last day of previous month')) . ")  AND YEAR(date) = " . date('Y', strtotime('last day of previous month'));
-    //echo $checksql;
+    $checksql = "SELECT * FROM invoices WHERE userid = ? AND Month(date) in (?) AND YEAR(date) = ?";
     if ($stmt = mysqli_prepare($link, $checksql)) {
+        $check_userid = intval($_POST['userid']);
+        $check_month = date('m', strtotime('last day of previous month'));
+        $check_year = date('Y', strtotime('last day of previous month'));
+        mysqli_stmt_bind_param($stmt, "iis", $check_userid, $check_month, $check_year);
 
         mysqli_stmt_execute($stmt)
-                or die("Unable to execute query: " . $stmt->error);
+                or die("Unable to execute query.");
 
         $rslt = mysqli_stmt_get_result($stmt);
         while ($check = mysqli_fetch_array($rslt)) {
-            $sqldel = "DELETE FROM invoices WHERE invoiceId = " . $check["invoiceId"];
+            $sqldel = "DELETE FROM invoices WHERE invoiceId = ?";
             if ($stmt2 = mysqli_prepare($link, $sqldel)) {
-
+                $del_id = intval($check["invoiceId"]);
+                mysqli_stmt_bind_param($stmt2, "i", $del_id);
                 mysqli_stmt_execute($stmt2)
-                        or die("Unable to execute query: " . $stmt2->error);
+                        or die("Unable to execute query.");
             }
         }
     }
@@ -29,16 +33,16 @@ if ($_POST) {
 
     $stmt3 = mysqli_prepare($link, $sql);
 
-    $userid = mysqli_real_escape_string($link, $_POST['userid']);
-    $date = mysqli_real_escape_string($link, $_POST['date']);
-    $items = empty(mysqli_real_escape_string($link, $_POST['hours'])) ? 0 : mysqli_real_escape_string($link, $_POST['hours']);
+    $userid = intval($_POST['userid']);
+    $date = $_POST['date'];
+    $items = empty($_POST['hours']) ? 0 : floatval($_POST['hours']);
 
-    $daily = empty(mysqli_real_escape_string($link, $_POST['daily'])) ? 0 : mysqli_real_escape_string($link, $_POST['daily']);
-    $italy = empty(mysqli_real_escape_string($link, $_POST['italy'])) ? 0 : mysqli_real_escape_string($link, $_POST['italy']);
+    $daily = empty($_POST['daily']) ? 0 : intval($_POST['daily']);
+    $italy = empty($_POST['italy']) ? 0 : intval($_POST['italy']);
 
-    $costs = empty(mysqli_real_escape_string($link, $_POST['costs'])) ? 0 : mysqli_real_escape_string($link, $_POST['costs']);
+    $costs = empty($_POST['costs']) ? 0 : floatval($_POST['costs']);
 
-    $rate = empty(mysqli_real_escape_string($link, $_POST['rate'])) ? 0 : mysqli_real_escape_string($link, $_POST['rate']);
+    $rate = empty($_POST['rate']) ? 0 : floatval($_POST['rate']);
 
 
     $subtotal = $rate * $items;
@@ -51,7 +55,8 @@ if ($_POST) {
         if (mysqli_stmt_execute($stmt3)) {
             echo "saved";
         } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+            error_log("SQL Error: " . mysqli_error($link));
+            echo "Error processing request.";
         }
 
         $invoiceid = mysqli_insert_id($link);
@@ -69,23 +74,27 @@ function generatePDF($userid, $date, $rate, $hours, $costs, $subtotal, $total, $
     $db = new Database();
     $link = $db->connect();
 
-    $sql = "SELECT * FROM users WHERE userId = " . $userid . " AND userPrivilege = 5";
+    $sql = "SELECT * FROM users WHERE userId = ? AND userPrivilege = 5";
 
     $invoiceno = 1;
+    $userid_int = intval($userid);
 
     if ($stmt = mysqli_prepare($link, $sql)) {
+        mysqli_stmt_bind_param($stmt, "i", $userid_int);
 
         mysqli_stmt_execute($stmt)
-                or die("Unable to execute query: " . $stmt->error);
+                or die("Unable to execute query.");
 
         $rslt = mysqli_stmt_get_result($stmt);
         while ($user = mysqli_fetch_array($rslt)) {
             $usr = $functions->GetUser($user['userId'], "userId");
-            $sql2 = "SELECT * FROM mentors WHERE mentorId = " . $user['recordId'];
+            $sql2 = "SELECT * FROM mentors WHERE mentorId = ?";
             if ($stmt2 = mysqli_prepare($link, $sql2)) {
+                $record_id = intval($user['recordId']);
+                mysqli_stmt_bind_param($stmt2, "i", $record_id);
 
                 mysqli_stmt_execute($stmt2)
-                        or die("Unable to execute query: " . $stmt2->error);
+                        or die("Unable to execute query.");
 
                 $rslt2 = mysqli_stmt_get_result($stmt2);
                 while ($mentor = mysqli_fetch_array($rslt2)) {
@@ -102,7 +111,7 @@ function generatePDF($userid, $date, $rate, $hours, $costs, $subtotal, $total, $
 
 
                     $content = str_replace("{date}", $date, $content);
-                    $content = str_replace("{invoiceno}", $_POST['invoiceno'] . "/" . date('F/Y', strtotime('last day of previous month')), $content);
+                    $content = str_replace("{invoiceno}", htmlspecialchars($_POST['invoiceno'], ENT_QUOTES, 'UTF-8') . "/" . date('F/Y', strtotime('last day of previous month')), $content);
 
                     $content = str_replace("{invoicetype}", "Tutor", $content);
                     $content = str_replace("{period}", date('F Y', strtotime('last day of previous month')), $content);
@@ -126,13 +135,13 @@ function generatePDF($userid, $date, $rate, $hours, $costs, $subtotal, $total, $
     $mfolder = date('F', strtotime('last day of previous month'));
 
     if (!is_dir('../invoices')) {
-        mkdir('../invoices', 0777, true);
+        mkdir('../invoices', 0755, true);
     }
     if (!is_dir('../invoices/' . $yfolder)) {
-        mkdir('../invoices/' . $yfolder, 0777, true);
+        mkdir('../invoices/' . $yfolder, 0755, true);
     }
     if (!is_dir('../invoices/' . $yfolder . '/' . $mfolder)) {
-        mkdir('../invoices/' . $yfolder . '/' . $mfolder, 0777, true);
+        mkdir('../invoices/' . $yfolder . '/' . $mfolder, 0755, true);
     }
 
 

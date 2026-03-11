@@ -11,36 +11,37 @@ if ($_POST) {
                                         VALUES (?,?,?,?,?,?)";
     $stmt = mysqli_prepare($link, $sql);
 
-    $sender = mysqli_real_escape_string($link, $_POST['sender']);
-    $subject = mysqli_real_escape_string($link, $_POST['subject']);
-    $message = mysqli_real_escape_string($link, $_POST['message']);
+    $sender = intval($_POST['sender']);
+    $subject = $_POST['subject'];
+    $message = $_POST['message'];
     $date = date('Y-m-d H:i:s');
-    $recipient = mysqli_real_escape_string($link, $_POST['recipient']);
-    if($_FILES){
-    $target_dir = "../uploads/";
-    $fileurl="";
-$target_file = $target_dir . basename($_FILES["file"]["name"]);
-$uploadOk = 1;
+    $recipient = intval($_POST['recipient']);
+    $fileurl = "";
+    if($_FILES && !empty($_FILES["file"]["name"])){
+        $target_dir = "../uploads/";
 
-// Check if file already exists
-if (file_exists($target_file)) {
-  echo "Sorry, file already exists.<br>";
-  $uploadOk = 0;
-  $fileurl = $target_file;
-}
+        // Validate file type - whitelist safe extensions
+        $allowed_extensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'png', 'jpg', 'jpeg', 'gif'];
+        $file_extension = strtolower(pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION));
 
-// Check if $uploadOk is set to 0 by an error
-if ($uploadOk == 0) {
-  echo "Sorry, your file was not uploaded.<br>";
-// if everything is ok, try to upload file
-} else {
-  if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
-    //echo "The file ". htmlspecialchars( basename( $_FILES["file"]["name"])). " has been uploaded.";
-    $fileurl = $target_file;
-  } else {
-    echo "Sorry, there was an error uploading your file.<br>";
-  }
-}
+        // Max file size: 10MB
+        $max_file_size = 10 * 1024 * 1024;
+
+        if (!in_array($file_extension, $allowed_extensions)) {
+            echo "File type not allowed.<br>";
+        } elseif ($_FILES["file"]["size"] > $max_file_size) {
+            echo "File too large (max 10MB).<br>";
+        } else {
+            // Generate safe unique filename to prevent overwrite and path traversal
+            $safe_filename = uniqid('file_', true) . '.' . $file_extension;
+            $target_file = $target_dir . $safe_filename;
+
+            if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
+                $fileurl = $target_file;
+            } else {
+                echo "Sorry, there was an error uploading your file.<br>";
+            }
+        }
     }
     // Bind variables to the prepared statement as parameters
     mysqli_stmt_bind_param($stmt, "isssis", $sender, $subject, $message, $date, $recipient, $fileurl);
@@ -50,7 +51,8 @@ if ($uploadOk == 0) {
         if (array_key_exists('mentor', $_POST))
             $functions->SendEmailToUser($recipient, "userId", "TutorMeet - notification", "You've got new message in TutorMeet");
     } else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($link);
+        error_log("SQL Error: " . mysqli_error($link));
+        echo "Error processing request.";
     }
     mysqli_stmt_close($stmt);
 

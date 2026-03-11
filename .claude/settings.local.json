@@ -3,7 +3,9 @@
     "allow": [
       "Bash(xargs wc -l)",
       "Read(//function GetHourSessions/,/^    function [^G]/**)",
-      "Read(//function GetDailySessions/,/^    function [^G]/**)"
+      "Read(//function GetDailySessions/,/^    function [^G]/**)",
+      "Bash(find /s/Projects/Web/myelab.websfera.pl -type f -name *.php)",
+      "Bash(grep -r mysqli_real_escape_string /s/Projects/Web/myelab.websfera.pl --include=*.php)"
     ]
   }
 }

@@ -8,41 +8,40 @@ if ($_POST) {
     $db = new Database();
     $link = $db->connect();
 
-    $userid = mysqli_real_escape_string($link, $_POST['userid']);
-    $mentorid = mysqli_real_escape_string($link, $_POST['mentorid']);
+    $userid = intval($_POST['userid']);
+    $mentorid = intval($_POST['mentorid']);
 
-    $sql = "UPDATE aplicants SET street=?, streetno=?, localno=?, town=?, type=? WHERE aplicantId = " . $mentorid;
+    $sql = "UPDATE aplicants SET street=?, streetno=?, localno=?, town=?, type=? WHERE aplicantId = ?";
     $stmt = mysqli_prepare($link, $sql);
 
-    $p_street = mysqli_real_escape_string($link, $_POST['street']);
-    $p_streetno = mysqli_real_escape_string($link, $_POST['streetno']);
-    $p_localno = mysqli_real_escape_string($link, $_POST['localno']);
-    $p_town = mysqli_real_escape_string($link, $_POST['town']);
-    $p_postalcode = mysqli_real_escape_string($link, $_POST['postalcode']);
-    $p_contract = mysqli_real_escape_string($link, $_POST['type']);
-
-
+    $p_street = $_POST['street'];
+    $p_streetno = $_POST['streetno'];
+    $p_localno = $_POST['localno'];
+    $p_town = $_POST['town'];
+    $p_contract = intval($_POST['type']);
 
     // Bind variables to the prepared statement as parameters
-    mysqli_stmt_bind_param($stmt, "ssssi", $p_street, $p_streetno, $p_localno, $p_town, $p_contract);
+    mysqli_stmt_bind_param($stmt, "ssssii", $p_street, $p_streetno, $p_localno, $p_town, $p_contract, $mentorid);
 
     if (mysqli_stmt_execute($stmt)) {
-        $sql2 = "UPDATE users SET userEmail=? WHERE userId = " . $userid;
+        $sql2 = "UPDATE users SET userEmail=? WHERE userId = ?";
         $stmt2 = mysqli_prepare($link, $sql2);
-        $u_email = mysqli_real_escape_string($link, $_POST['email']);
+        $u_email = $_POST['email'];
 
         // Bind variables to the prepared statement as parameters
-        mysqli_stmt_bind_param($stmt2, "s", $u_email);
+        mysqli_stmt_bind_param($stmt2, "si", $u_email, $userid);
 
         if (mysqli_stmt_execute($stmt2)) {
             echo "saved";
         } else {
-            echo "Error: " . $sql2 . "<br>" . mysqli_error($link);
+            error_log("SQL Error: " . mysqli_error($link));
+            echo "Error processing request.";
         }
 
         mysqli_stmt_close($stmt2);
     } else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($link);
+        error_log("SQL Error: " . mysqli_error($link));
+        echo "Error processing request.";
     }
 
     mysqli_stmt_close($stmt);

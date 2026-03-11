@@ -105,11 +105,13 @@ include("top.php");
                         //echo $_GET['id'] . "<br>";
                         $content = $functions->AcceptMeeting($_GET['id']);
                     elseif ($_GET['func'] == "offline") :
-                        $sql = "SELECT * FROM calendar WHERE id = " . mysql_real_escape_string ($_GET['id']);
+                        $sql = "SELECT * FROM calendar WHERE id = ?";
 
                         if ($stmt = mysqli_prepare($link, $sql)) {
+                            $cal_id = intval($_GET['id']);
+                            mysqli_stmt_bind_param($stmt, "i", $cal_id);
                             mysqli_stmt_execute($stmt)
-                                    or die("Unable to execute query: " . $stmt->error);
+                                    or die("Unable to execute query.");
 
                             $rslt = mysqli_stmt_get_result($stmt);
 

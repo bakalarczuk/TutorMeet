@@ -19,7 +19,8 @@ if ($_POST) {
         $description = $_POST['description'];
         $daily = isset($_POST['daily']) ? $_POST['daily'] : 0;
 
-        $duration = $daily == 0 ? $_POST['hours'] * 60 : 0;
+        $hours_val = floatval($_POST['hours']);
+        $duration = $daily == 0 ? $hours_val * 60 : 0;
         $mentorid = (!isset($_POST['mentorid'])) ? $functions->GetUser($_SESSION['id'], "userId") : $functions->GetUser($_POST['mentorid'], "recordId");
 //                echo $mentorid['recid'];
 
@@ -32,8 +33,10 @@ if ($_POST) {
         mysqli_stmt_bind_param($stmt3, "ssssdiisi", $date, $time, $title, $description, $duration, $daily, $mentorid['recid'], $aplicants, $italy);
 
         if (mysqli_stmt_execute($stmt3)) {
-            $sql2 = "UPDATE assignments SET hours = hours + " . $_POST['hours'] . ", hoursleft = hoursleft - " . $_POST['hours'] . " WHERE aplicantid = " . $aplicants;
+            $sql2 = "UPDATE assignments SET hours = hours + ?, hoursleft = hoursleft - ? WHERE aplicantid = ?";
             $stmt4 = mysqli_prepare($link, $sql2);
+            $aplicants_int = intval($aplicants);
+            mysqli_stmt_bind_param($stmt4, "ddi", $hours_val, $hours_val, $aplicants_int);
 
             if (mysqli_stmt_execute($stmt4)) {
                 echo "saved";
@@ -45,11 +48,13 @@ if ($_POST) {
                 $functions->SendEmail($mentorid['email'], "New session", $mentormsg);
                 $functions->SendEmail($aplicant['email'], "New session", $applicantmsg);
             } else {
-                echo "Error: " . $sql2 . "<br>" . mysqli_error($link);
+                error_log("SQL Error: " . mysqli_error($link));
+                echo "Error processing request.";
             }
             mysqli_stmt_close($stmt4);
         } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+            error_log("SQL Error: " . mysqli_error($link));
+            echo "Error processing request.";
         }
         mysqli_stmt_close($stmt3);
 

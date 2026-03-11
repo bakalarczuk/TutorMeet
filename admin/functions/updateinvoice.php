@@ -7,33 +7,35 @@ if ($_POST) {
     $db = new Database();
     $link = $db->connect();
 
-    $sql = "UPDATE invoices SET rate = ?,items = ?,costs = ?,subtotal = ?,total = ? WHERE invoiceId = " . $_POST['invoiceid'];
+    $sql = "UPDATE invoices SET rate = ?,items = ?,costs = ?,subtotal = ?,total = ? WHERE invoiceId = ?";
 
     $stmt3 = mysqli_prepare($link, $sql);
 
-    $userid = mysqli_real_escape_string($link, $_POST['userid']);
-    $rate = empty(mysqli_real_escape_string($link, $_POST['rate'])) ? 0 : mysqli_real_escape_string($link, $_POST['rate']);
-    $items = empty(mysqli_real_escape_string($link, $_POST['hours'])) ? 0 : mysqli_real_escape_string($link, $_POST['hours']);
-    $costs = empty(mysqli_real_escape_string($link, $_POST['costs'])) ? 0 : mysqli_real_escape_string($link, $_POST['costs']);
+    $userid = intval($_POST['userid']);
+    $invoiceid_param = intval($_POST['invoiceid']);
+    $rate = empty($_POST['rate']) ? 0 : floatval($_POST['rate']);
+    $items = empty($_POST['hours']) ? 0 : floatval($_POST['hours']);
+    $costs = empty($_POST['costs']) ? 0 : floatval($_POST['costs']);
 
     $subtotal = $rate * $items;
     $total = $costs + $subtotal;
 
     if ($total > 0) {
         // Bind variables to the prepared statement as parameters
-        mysqli_stmt_bind_param($stmt3, "ddddd", $rate, $items, $costs, $subtotal, $total);
+        mysqli_stmt_bind_param($stmt3, "dddddi", $rate, $items, $costs, $subtotal, $total, $invoiceid_param);
 
         if (mysqli_stmt_execute($stmt3)) {
             echo "saved";
         } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+            error_log("SQL Error: " . mysqli_error($link));
+            echo "Error processing request.";
         }
 
         mysqli_stmt_close($stmt3);
 
         mysqli_close($link);
 
-        generatePDF($userid, $_POST['invoiceid']);
+        generatePDF($userid, $invoiceid_param);
     }
 }
 
@@ -43,34 +45,40 @@ function generatePDF($userid, $invoiceid)
     $db = new Database();
     $link = $db->connect();
 
-    $sql = "SELECT * FROM users WHERE userId = " . $userid . " AND userPrivilege = 5";
+    $sql = "SELECT * FROM users WHERE userId = ? AND userPrivilege = 5";
 
     $invoiceno = 1;
     $yfolder = "";
     $mfolder = "";
     $content = "";
+    $userid_int = intval($userid);
 
     if ($stmt = mysqli_prepare($link, $sql)) {
+        mysqli_stmt_bind_param($stmt, "i", $userid_int);
 
         mysqli_stmt_execute($stmt)
-            or die("Unable to execute query: " . $stmt->error);
+            or die("Unable to execute query.");
 
         $rslt = mysqli_stmt_get_result($stmt);
         while ($user = mysqli_fetch_array($rslt)) {
             $usr = $functions->GetUser($user['userId'], "userId");
-            $sql2 = "SELECT * FROM mentors WHERE mentorId = " . $user['recordId'];
+            $sql2 = "SELECT * FROM mentors WHERE mentorId = ?";
             if ($stmt2 = mysqli_prepare($link, $sql2)) {
+                $record_id = intval($user['recordId']);
+                mysqli_stmt_bind_param($stmt2, "i", $record_id);
 
                 mysqli_stmt_execute($stmt2)
-                    or die("Unable to execute query: " . $stmt2->error);
+                    or die("Unable to execute query.");
 
                 $rslt2 = mysqli_stmt_get_result($stmt2);
                 while ($mentor = mysqli_fetch_array($rslt2)) {
-                    $sql3 = "SELECT * FROM invoices WHERE invoiceid = " . $invoiceid;
+                    $sql3 = "SELECT * FROM invoices WHERE invoiceid = ?";
                     if ($stmt3 = mysqli_prepare($link, $sql3)) {
+                        $invoiceid_int = intval($invoiceid);
+                        mysqli_stmt_bind_param($stmt3, "i", $invoiceid_int);
 
                         mysqli_stmt_execute($stmt3)
-                            or die("Unable to execute query: " . $stmt3->error);
+                            or die("Unable to execute query.");
 
                         $rslt3 = mysqli_stmt_get_result($stmt3);
                         while ($invoice = mysqli_fetch_array($rslt3)) {
@@ -108,13 +116,13 @@ function generatePDF($userid, $invoiceid)
                             );
 
                             if (!is_dir('../invoices')) {
-                                mkdir('../invoices', 0777, true);
+                                mkdir('../invoices', 0755, true);
                             }
                             if (!is_dir('../invoices/' . $yfolder)) {
-                                mkdir('../invoices/' . $yfolder, 0777, true);
+                                mkdir('../invoices/' . $yfolder, 0755, true);
                             }
                             if (!is_dir('../invoices/' . $yfolder . '/' . $mfolder)) {
-                                mkdir('../invoices/' . $yfolder . '/' . $mfolder, 0777, true);
+                                mkdir('../invoices/' . $yfolder . '/' . $mfolder, 0755, true);
                             }
 
 

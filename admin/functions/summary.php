@@ -21,7 +21,7 @@ if ($_POST) {
         if (mysqli_stmt_execute($stmt)) {
             echo "saved";
         } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+            error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
         }
     }
     $functions->SendMailTo($_SESSION['id'], "Session summary", "Session ended with summary for mentor " . $_SESSION['realname'], 4);

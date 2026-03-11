@@ -21,7 +21,7 @@ if ($_POST) {
             echo "sent";
             $functions->SendEmailToUser($_POST['recipient'], "userId", "TutorMeet - notification", "Session approved");
         } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($link);
+            error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
         }
     }
 

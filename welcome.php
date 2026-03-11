@@ -53,7 +53,7 @@ else :
 // Validate credentials
             if (empty($newpass_err) && empty($repeatpass_err) && empty($nomatchpass_err) && empty($rodo1_err) && empty($rodo2_err) && empty($bio_err)) {
 // Prepare a select statement
-                $password = password_hash(mysqli_real_escape_string($link, $_POST['newpass']), PASSWORD_DEFAULT);
+                $password = password_hash($_POST['newpass'], PASSWORD_DEFAULT);
                 $sql = "UPDATE users SET userPass = ?, first = 0  WHERE userId = ?";
 
                 if ($stmt = mysqli_prepare($link, $sql)) {
@@ -79,7 +79,7 @@ else :
                         }
                     } else {
 // Display an error message if username doesn't exist
-                        echo "Error: " . $sql . "<br>" . mysqli_error($link);
+                        error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
                     }
                 } else {
                     echo "Oops! Something went wrong. Please try again later.";

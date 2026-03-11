@@ -24,7 +24,7 @@ $user = $func->GetUser($userid, "userId");
         $msg = "TutorMeet system password reset. Your temporary password is: " . $newpass . ". If you confirm password change, please click on link <a href='https://".$_SERVER['SERVER_NAME']."/confirm.php?q=".$userid."&t=".$newpass."'>here</a>";
         $func->SendEmail($user["email"], "TutorMeet password reset", $msg);
     } else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($link);
+        error_log("SQL Error: " . mysqli_error($link)); echo "Error processing request.";
     }
 
     mysqli_stmt_close($stmt);
