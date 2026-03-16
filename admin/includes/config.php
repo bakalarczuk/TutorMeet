@@ -4,7 +4,7 @@
 define('DB_SERVER', getenv('DB_SERVER') ?: 'localhost');
 define('DB_USERNAME', getenv('DB_USERNAME') ?: 'root');
 define('DB_PASSWORD', getenv('DB_PASSWORD') ?: 'root');
-define('DB_NAME', getenv('DB_NAME') ?: 'myelab');
+define('DB_NAME', getenv('DB_NAME') ?: 'mydbname');
 
 
 class Database
